@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import jakarta.persistence.Column;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.yaml.snakeyaml.scanner.Constant;
 
@@ -51,7 +52,7 @@ public class Veiculo{
     @Column(name = "cor_veiculo", nullable = false, length = 20)
     private String cor;
 
-    @Pattern(regexp = "^[a-zA-Z0-9-\\s.,:\\\\'\"+°ºª%#&¹²³()áàâãéèêíìîóòôõúùûçÁÀÂÃÉÈÊÍÌÎÓÒÔÕÚÙÛÇ]+$",
+    @Pattern(regexp = "^[a-zA-Z0-9-\\s.,:/\\\\'\"+°ºª%#&¹²³()áàâãéèêíìîóòôõúùûçÁÀÂÃÉÈÊÍÌÎÓÒÔÕÚÙÛÇ]+$",
             message = "Desculpe, mas a descrição contém caracteres inválidos.")
     @Size(min = 10, max = 60, message = "Desculpe, mas o limite mínimo do texto é 10 e" +
             "o limite máximo é de 60 caracteres. Por favor, dê uma descrição do tipo de motor.")
@@ -67,8 +68,9 @@ public class Veiculo{
     private String numerochassi;
 
     //@Pattern(regexp = "^[a-zA-Z0-9-]+$", message = "A placa contém caracteres inválidos. Use apenas letras, números e hífens.")
-   // @Size(min = 6, max = 8, message = "A placa deve ter entre 6 e 8 caracteres (incluindo hífen, se aplicável).")
-    @Column(name = "placa_veiculo", unique = true, length = 8)
+   //@Size(min = 6, max = 8, message = "A placa deve ter entre 6 e 8 caracteres (incluindo hífen, se aplicável).")
+    @ColumnDefault(value = "'NENHUMA'")
+    @Column(name = "placa_veiculo", length = 8)
     private String placa;
 
     @Pattern(regexp = "^[a-zA-Z0-9-\\sáàâãéèêíìîóòôõúùûçÁÀÂÃÉÈÊÍÌÎÓÒÔÕÚÙÛÇ]+$",
@@ -104,7 +106,7 @@ public class Veiculo{
     @Column(name = "preco_veiculo", nullable = false)
     private BigDecimal preco;
 
-    public Integer getId(){ return id; }
+    public Integer getId(){ return id;}
 
     public String getCategoria() {
         return categoria;

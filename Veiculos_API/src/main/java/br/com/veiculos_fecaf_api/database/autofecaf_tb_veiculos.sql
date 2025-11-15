@@ -10,7 +10,7 @@
         modelo varchar(60) not null,
         motor varchar(60) not null,
         numero_chassi varchar(17) not null,
-        placa_veiculo varchar(8),
+        placa_veiculo varchar(8) default 'NENHUMA',
         preco_veiculo decimal(38,2) not null check (preco_veiculo>=0),
         quilometragem float(53) not null check (quilometragem>=0),
         primary key (id)

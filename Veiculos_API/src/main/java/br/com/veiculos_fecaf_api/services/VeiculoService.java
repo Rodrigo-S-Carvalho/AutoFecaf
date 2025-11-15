@@ -2,12 +2,12 @@ package br.com.veiculos_fecaf_api.services;
 
 import br.com.veiculos_fecaf_api.models.Veiculo;
 import br.com.veiculos_fecaf_api.repository.VeiculoRepository;
-import jakarta.validation.constraints.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class VeiculoService {
@@ -59,9 +59,10 @@ public class VeiculoService {
             throw new IllegalArgumentException("Desculpe, mas a placa é " +
                     "obrigatória para veículos Seminovo ou Usado.");
 
+        } else {
+
+            return veiculorepository.save(veiculo);
         }
-        veiculo.setPlaca(null);
-        return veiculorepository.save(veiculo);
     }
 
 }
