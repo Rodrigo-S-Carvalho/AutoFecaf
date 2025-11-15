@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Veículos</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #eef1f5; margin: 0; padding: 0; }
+        h1 { background: #0d47a1; color: white; margin: 0; padding: 20px; text-align: center; }
+        .container { background: white; width: 90%; max-width: 850px; margin: 25px auto; padding: 25px; border-radius: 8px; box-shadow: 0 0 10px #bbb; }
+        label { font-weight: bold; margin-top: 12px; display: block; }
+        input, textarea, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; }
+        button { width: 100%; padding: 14px; margin-top: 20px; border: none; background: #0d47a1; color: white; cursor: pointer; font-size: 18px; border-radius: 6px; }
+        button:hover { background: #002f6c; }
+        .msg { padding: 15px; margin-top: 25px; display: none; border-radius: 6px; }
+        .success { background: #c8e6c9; color: #1b5e20; }
+        .error { background: #ffcdd2; color: #b71c1c; }
+        .item { background: #fafafa; padding: 15px; border: 1px solid #ccc; margin-top: 15px; border-radius: 6px; }
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,.6); justify-content: center; align-items: center; }
+        #modalConteudo { background: white; width: 90%; max-width: 650px; max-height: 85%; padding: 20px; border-radius: 10px; overflow-y: auto; box-shadow: 0 0 14px #222; }
+        #modalConteudo button { margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<h1>Cadastro de Veículos</h1>
+
+<div class="container">
+
+    <!-- FORM CADASTRO -->
+    <form id="formVeiculo">
+        <label>Categoria</label>
+        <input id="categoria" required maxlength="60">
+
+        <label>Marca</label>
+        <input id="marca" required maxlength="60">
+
+        <label>Modelo</label>
+        <input id="modelo" required maxlength="60">
+
+        <label>Ano Fabricação</label>
+        <input id="anoFabric" type="number" min="1750" max="2100" required>
+
+        <label>Cor</label>
+        <input id="cor" required maxlength="20">
+
+        <label>Motor</label>
+        <input id="motor" required minlength="10" maxlength="60">
+
+        <label>Número do Chassi</label>
+        <input id="numerochassi" minlength="17" maxlength="17" required>
+
+        <label>Placa</label>
+        <input id="placa" minlength="6" maxlength="8">
+
+        <label>Condição</label>
+        <select id="condicao" required>
+            <option value="">Selecione</option>
+            <option value="Novo">Novo</option>
+            <option value="Seminovo">Seminovo</option>
+            <option value="Usado">Usado</option>
+        </select>
+
+        <label>Descrição</label>
+        <textarea id="descricao" minlength="10" maxlength="3000" required></textarea>
+
+        <label>Disponibilidade</label>
+        <select id="disponibilidade" required>
+            <option value="">Selecione</option>
+            <option value="À venda">À venda</option>
+            <option value="Reservado">Reservado</option>
+            <option value="Vendido">Vendido</option>
+            <option value="Fora de linha">Fora de linha</option>
+        </select>
+
+        <label>Quilometragem</label>
+        <input id="quilometragem" type="number" min="0" step="0.1" required>
+
+        <label>Preço</label>
+        <input id="preco" type="number" min="0" step="0.01" required>
+
+        <button type="submit">Cadastrar Veículo</button>
+    </form>
+
+    <div id="msg" class="msg"></div>
+
+    <!-- FILTROS -->
+    <h2>Filtrar Veículos</h2>
+
+    <label>Categoria</label>
+    <input id="filtroCategoria" placeholder="Digite a categoria">
+
+    <label>Marca</label>
+    <input id="filtroMarca" placeholder="Digite a marca">
+
+    <label>Modelo</label>
+    <input id="filtroModelo" placeholder="Digite o modelo">
+
+    <label>Cor</label>
+    <input id="filtroCor" placeholder="Digite a cor">
+
+    <label>Condição</label>
+    <select id="filtroCondicao">
+        <option value="">Todos</option>
+        <option value="Novo">Novo</option>
+        <option value="Seminovo">Seminovo</option>
+        <option value="Usado">Usado</option>
+    </select>
+
+    <label>Ano Fabricação</label>
+    <input id="filtroAno" type="number" min="1750" max="2100" placeholder="Todos">
+
+    <label>Disponibilidade</label>
+    <select id="filtroDisponibilidade">
+        <option value="">Todos</option>
+        <option value="À venda">À venda</option>
+        <option value="Reservado">Reservado</option>
+        <option value="Vendido">Vendido</option>
+        <option value="Fora de linha">Fora de linha</option>
+    </select>
+
+    <button onclick="listarVeiculos()">Listar Veículos</button>
+
+    <div id="lista"></div>
+</div>
+
+<!-- MODAL DE EDIÇÃO -->
+<div id="modal">
+    <div id="modalConteudo">
+        <h2>Editar Veículo</h2>
+
+        <input type="hidden" id="editId">
+
+        <label>Categoria</label>
+        <input id="editCategoria" maxlength="60">
+
+        <label>Marca</label>
+        <input id="editMarca" maxlength="60">
+
+        <label>Modelo</label>
+        <input id="editModelo" maxlength="60">
+
+        <label>Ano Fabricação</label>
+        <input id="editAnoFabric" type="number" min="1750" max="2100">
+
+        <label>Cor</label>
+        <input id="editCor" maxlength="20">
+
+        <label>Motor</label>
+        <input id="editMotor" minlength="10" maxlength="60">
+
+        <label>Número do Chassi</label>
+        <input id="editNumerochassi" minlength="17" maxlength="17">
+
+        <label>Placa</label>
+        <input id="editPlaca" minlength="6" maxlength="8">
+
+        <label>Condição</label>
+        <select id="editCondicao">
+            <option value="">Selecione</option>
+            <option value="Novo">Novo</option>
+            <option value="Seminovo">Seminovo</option>
+            <option value="Usado">Usado</option>
+        </select>
+
+        <label>Descrição</label>
+        <textarea id="editDescricao" minlength="10" maxlength="3000"></textarea>
+
+        <label>Disponibilidade</label>
+        <select id="editDisponibilidade">
+            <option value="">Selecione</option>
+            <option value="À venda">À venda</option>
+            <option value="Reservado">Reservado</option>
+            <option value="Vendido">Vendido</option>
+            <option value="Fora de linha">Fora de linha</option>
+        </select>
+
+        <label>Quilometragem</label>
+        <input id="editQuilometragem" type="number" min="0" step="0.1">
+
+        <label>Preço</label>
+        <input id="editPreco" type="number" min="0" step="0.01">
+
+        <button onclick="salvarEdicao()">Salvar Alterações</button>
+        <button onclick="fecharModal()" style="background:#b71c1c;">Cancelar</button>
+    </div>
+</div>
+
+<script>
+    const API = "http://localhost:8080/api/veiculos";
+    let listaVeiculosCache = [];
+
+    /* CADASTRAR VEÍCULO */
+    document.getElementById("formVeiculo").addEventListener("submit", async e => {
+        e.preventDefault();
+        const veiculo = {
+            categoria: categoria.value,
+            marca: marca.value,
+            modelo: modelo.value,
+            anoFabric: parseInt(anoFabric.value),
+            cor: cor.value,
+            motor: motor.value,
+            numerochassi: numerochassi.value,
+            placa: placa.value,
+            condicao: condicao.value,
+            descricao: descricao.value,
+            disponibilidade: disponibilidade.value,
+            quilometragem: parseFloat(quilometragem.value),
+            preco: parseFloat(preco.value)
+        };
+
+        try {
+            const response = await fetch(API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json; charset=UTF-8" },
+                body: JSON.stringify(veiculo)
+            });
+            const msg = document.getElementById("msg");
+
+            if (!response.ok) {
+                let txt = "Erro ao cadastrar.";
+                try {
+                    const e = await response.json();
+                    if (e && e.errors) txt = e.errors.join(" | ");
+                } catch {}
+                msg.className = "msg error";
+                msg.style.display = "block";
+                msg.textContent = txt;
+                return;
+            }
+
+            msg.className = "msg success";
+            msg.style.display = "block";
+            msg.textContent = "Veículo cadastrado com sucesso!";
+            document.getElementById("formVeiculo").reset();
+        } catch {
+            const msg = document.getElementById("msg");
+            msg.className = "msg error";
+            msg.style.display = "block";
+            msg.textContent = "Não foi possível conectar.";
+        }
+    });
+
+    /* LISTAR VEÍCULOS COM FILTROS */
+    async function listarVeiculos() {
+        const listaDiv = document.getElementById("lista");
+        listaDiv.innerHTML = "Carregando...";
+
+        const response = await fetch(API + "/listarveiculos");
+        listaVeiculosCache = await response.json();
+
+        const filtroCategoria = document.getElementById("filtroCategoria").value.toLowerCase();
+        const filtroMarca = document.getElementById("filtroMarca").value.toLowerCase();
+        const filtroModelo = document.getElementById("filtroModelo").value.toLowerCase();
+        const filtroCor = document.getElementById("filtroCor").value.toLowerCase();
+        const filtroCondicao = document.getElementById("filtroCondicao").value;
+        const filtroAno = document.getElementById("filtroAno").value;
+        const filtroDisponibilidade = document.getElementById("filtroDisponibilidade").value;
+
+        const veiculosFiltrados = listaVeiculosCache.filter(v => {
+            return (!filtroCategoria || v.categoria.toLowerCase().includes(filtroCategoria)) &&
+                   (!filtroMarca || v.marca.toLowerCase().includes(filtroMarca)) &&
+                   (!filtroModelo || v.modelo.toLowerCase().includes(filtroModelo)) &&
+                   (!filtroCor || v.cor.toLowerCase().includes(filtroCor)) &&
+                   (!filtroCondicao || v.condicao === filtroCondicao) &&
+                   (!filtroAno || v.anoFabric == filtroAno) &&
+                   (!filtroDisponibilidade || v.disponibilidade === filtroDisponibilidade);
+        });
+
+        listaDiv.innerHTML = "";
+        if (veiculosFiltrados.length === 0) { listaDiv.textContent = "Nenhum veículo encontrado."; return; }
+
+        veiculosFiltrados.forEach(v => {
+            const item = document.createElement("div");
+            item.className = "item";
+            item.innerHTML = `
+                <b>${v.categoria} | ${v.marca} ${v.modelo} (${v.anoFabric})</b><br>
+                <b>Cor:</b> ${v.cor}<br>
+                <b>Motor:</b> ${v.motor}<br>
+                <b>Chassi:</b> ${v.numerochassi}<br>
+                <b>Placa:</b> ${v.placa}<br>
+                <b>Condição:</b> ${v.condicao}<br>
+                <b>Disponibilidade:</b> ${v.disponibilidade}<br>
+                <b>Km:</b> ${v.quilometragem}<br>
+                <b>Preço:</b> R$ ${v.preco}<br><br>
+                <button onclick="abrirModal(${v.id})">Editar</button>
+            `;
+            listaDiv.appendChild(item);
+        });
+    }
+
+    /* ABRIR MODAL */
+    function abrirModal(id) {
+        const v = listaVeiculosCache.find(item => item.id === Number(id));
+        if (!v) { alert("Veículo não encontrado."); return; }
+
+        modal.style.display = "flex";
+        editId.value = v.id;
+        editCategoria.value = v.categoria;
+        editMarca.value = v.marca;
+        editModelo.value = v.modelo;
+        editAnoFabric.value = v.anoFabric;
+        editCor.value = v.cor;
+        editMotor.value = v.motor;
+        editNumerochassi.value = v.numerochassi;
+        editPlaca.value = v.placa;
+        editCondicao.value = v.condicao;
+        editDescricao.value = v.descricao;
+        editDisponibilidade.value = v.disponibilidade;
+        editQuilometragem.value = v.quilometragem;
+        editPreco.value = v.preco;
+    }
+
+    /* FECHAR MODAL */
+    function fecharModal() { modal.style.display = "none"; }
+
+    /* SALVAR EDIÇÃO */
+    async function salvarEdicao() {
+        const id = Number(editId.value);
+        const veiculoAtualizado = {
+            categoria: editCategoria.value,
+            marca: editMarca.value,
+            modelo: editModelo.value,
+            anoFabric: parseInt(editAnoFabric.value),
+            cor: editCor.value,
+            motor: editMotor.value,
+            numerochassi: editNumerochassi.value,
+            placa: editPlaca.value,
+            condicao: editCondicao.value,
+            descricao: editDescricao.value,
+            disponibilidade: editDisponibilidade.value,
+            quilometragem: parseFloat(editQuilometragem.value),
+            preco: parseFloat(editPreco.value)
+        };
+
+        const response = await fetch(`${API}/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(veiculoAtualizado)
+        });
+
+        if (!response.ok) {
+            let msg = "Erro ao atualizar.";
+            try { const e = await response.json(); if (e.errors) msg = e.errors.join(" | "); } catch {}
+            alert(msg);
+            return;
+        }
+
+        alert("Veículo atualizado com sucesso!");
+        fecharModal();
+        listarVeiculos();
+    }
+</script>
+
+</body>
+</html>
